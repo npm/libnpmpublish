@@ -18,10 +18,12 @@
     "update-contrib": "weallcontribute -o . && git add CONTRIBUTING.md && git commit -m 'docs(contributing): updated CONTRIBUTING.md'"
   },
   "devDependencies": {
+    "bluebird": "^3.5.1",
     "nock": "^9.6.1",
     "standard": "*",
     "standard-version": "*",
     "tap": "*",
+    "tar-stream": "^1.6.1",
     "weallbehave": "*",
     "weallcontribute": "*"
   },
