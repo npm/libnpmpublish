@@ -13,12 +13,13 @@ const url = require('url')
 const validate = require('aproba')
 
 const PublishConfig = figgyPudding({
-  access: { default: 'restricted' },
+  access: {},
   integrityHashes: { default: ['sha512'] },
   dryRun: 'dry-run',
   'dry-run': {},
   force: {},
   npmVersion: {},
+  tag: { default: 'latest' },
   Promise: { default: () => Promise }
 })
 
@@ -44,7 +45,7 @@ function publish (manifest, tarball, opts) {
       throw new Error("Can't restrict access to unscoped packages.")
     }
 
-    return slurpTarball(tarball).then(tardata => {
+    return slurpTarball(tarball, opts).then(tardata => {
       const metadata = buildMetadata(
         spec, auth, reg, pubManifest, tardata, opts
       )
@@ -113,7 +114,7 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
   }
 
   root.versions[ manifest.version ] = manifest
-  const tag = manifest.tag || this.config.defaultTag
+  const tag = manifest.tag || opts.tag
   root['dist-tags'][tag] = manifest.version
 
   const tbName = manifest.name + '-' + manifest.version + '.tgz'
