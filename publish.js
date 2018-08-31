@@ -29,10 +29,10 @@ function publish (manifest, tarball, opts) {
   return new opts.Promise(resolve => resolve()).then(() => {
     validate('OSO|OOO', [manifest, tarball, opts])
     if (manifest.private) {
-      throw new Error(
+      throw Object.assign(new Error(
         'This package has been marked as private\n' +
         "Remove the 'private' field from the package.json to publish it."
-      )
+      ), { code: 'EPRIVATE' })
     }
     const spec = npa.resolve(manifest.name, manifest.version)
     const reg = npmFetch.pickRegistry(spec, opts)
@@ -42,7 +42,10 @@ function publish (manifest, tarball, opts) {
     // registry-frontdoor cares about the access level, which is only
     // configurable for scoped packages
     if (!spec.scope && opts.access === 'restricted') {
-      throw new Error("Can't restrict access to unscoped packages.")
+      throw Object.assign(
+        new Error("Can't restrict access to unscoped packages."),
+        { code: 'EUNSCOPED' }
+      )
     }
 
     return slurpTarball(tarball, opts).then(tardata => {
@@ -91,7 +94,12 @@ function patchedManifest (spec, auth, base, opts) {
 
   fixer.fixNameField(manifest, { strict: true, allowLegacyCase: true })
   const version = semver.clean(manifest.version)
-  if (!version) { throw new Error('invalid semver: ' + manifest.version) }
+  if (!version) {
+    throw Object.assign(
+      new Error('invalid semver: ' + manifest.version),
+      { code: 'EBADSEMVER' }
+    )
+  }
   manifest.version = version
   return manifest
 }
@@ -147,16 +155,16 @@ function patchMetadata (current, newData, opts) {
     return semver.clean(v, true)
   }).concat(Object.keys(current.time || {}).map(v => {
     if (semver.valid(v, true)) { return semver.clean(v, true) }
-  }).filter(v => v))
+  })).filter(v => v)
 
-  if (curVers.indexOf(newData.version) !== -1) {
+  const newVersion = Object.keys(newData.versions)[0]
+
+  if (curVers.indexOf(newVersion) !== -1) {
     throw ConflictError(newData.name, newData.version)
   }
 
-  const newVersion = newData.version
-
+  current.versions = current.versions || {}
   current.versions[newVersion] = newData.versions[newVersion]
-  current._attachments = current._attachments || {}
   for (var i in newData) {
     switch (i) {
       // objects that copy over the new stuffs
@@ -164,6 +172,7 @@ function patchMetadata (current, newData, opts) {
       case 'versions':
       case '_attachments':
         for (var j in newData[i]) {
+          current[i] = current[i] || {}
           current[i][j] = newData[i][j]
         }
         break
@@ -177,7 +186,7 @@ function patchMetadata (current, newData, opts) {
         current[i] = newData[i]
     }
   }
-  const maint = JSON.parse(JSON.stringify(newData.maintainers))
+  const maint = newData.maintainers && JSON.parse(JSON.stringify(newData.maintainers))
   newData.versions[newVersion].maintainers = maint
   return current
 }
@@ -187,8 +196,13 @@ function slurpTarball (tarSrc, opts) {
     return opts.Promise.resolve(tarSrc)
   } else if (typeof tarSrc === 'string') {
     return opts.Promise.resolve(Buffer.from(tarSrc, 'base64'))
-  } else if (typeof tarSrc === 'object' && typeof tarSrc.pipe === 'function') {
+  } else if (typeof tarSrc.pipe === 'function') {
     return getStream.buffer(tarSrc)
+  } else {
+    return opts.Promise.reject(Object.assign(
+      new Error('invalid tarball argument. Must be a Buffer, a base64 string, or a binary stream'), {
+        code: 'EBADTAR'
+      }))
   }
 }
 
