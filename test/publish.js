@@ -855,3 +855,65 @@ test('publish includes access', t => {
     })
   })
 })
+
+test('publishConfig on manifest', t => {
+  const manifest = {
+    name: 'libnpmpublish',
+    version: '1.0.0',
+    description: 'some stuff',
+    publishConfig: {
+      registry: REG
+    }
+  }
+  return mockTar({
+    'package.json': JSON.stringify(manifest),
+    'index.js': 'console.log("hello world")'
+  }).then(tarData => {
+    const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
+    const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
+    const packument = {
+      name: 'libnpmpublish',
+      description: 'some stuff',
+      readme: '',
+      _id: 'libnpmpublish',
+      'dist-tags': {
+        latest: '1.0.0'
+      },
+      versions: {
+        '1.0.0': {
+          _id: 'libnpmpublish@1.0.0',
+          _nodeVersion: process.versions.node,
+          name: 'libnpmpublish',
+          version: '1.0.0',
+          description: 'some stuff',
+          dist: {
+            shasum,
+            integrity: integrity.toString(),
+            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+          },
+          publishConfig: {
+            registry: REG
+          }
+        }
+      },
+      _attachments: {
+        'libnpmpublish-1.0.0.tgz': {
+          'content_type': 'application/octet-stream',
+          data: tarData.toString('base64'),
+          length: tarData.length
+        }
+      }
+    }
+    const srv = tnock(t, REG)
+    srv.put('/libnpmpublish', body => {
+      t.deepEqual(body, packument, 'posted packument matches expectations')
+      return true
+    }, {
+      authorization: 'Bearer deadbeef'
+    }).reply(201, {})
+
+    return publish(manifest, tarData, { token: 'deadbeef' }).then(ret => {
+      t.ok(ret, 'publish succeeded')
+    })
+  })
+})

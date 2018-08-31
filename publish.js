@@ -33,7 +33,7 @@ function publish (manifest, tarball, opts) {
     }
     const spec = npa.resolve(manifest.name, manifest.version)
     // NOTE: spec is used to pick the appropriate registry/auth combo.
-    opts = opts.concat({ spec })
+    opts = opts.concat(manifest.publishConfig, { spec })
     const reg = npmFetch.pickRegistry(spec, opts)
     const auth = npmAuth(reg, opts)
     const pubManifest = patchedManifest(spec, auth, manifest, opts)
