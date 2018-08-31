@@ -63,6 +63,12 @@ If `opts.npmVersion` is passed in, it will be used as the `_npmVersion` field in
 the outgoing packument. It's recommended you add your own user agent string in
 there!
 
+If `opts.algorithms` is passed in, it should be an array of hashing algorithms
+to generate `integrity` hashes for. The default is `['sha512']`, which means you
+end up with `dist.integrity = 'sha512-deadbeefbadc0ffee'`. Any algorithm
+supported by your current node version is allowed -- npm clients that do not
+support those algorithms will simply ignore the unsupported hashes.
+
 ##### Example
 
 ```javascript
