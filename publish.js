@@ -15,9 +15,6 @@ const validate = require('aproba')
 const PublishConfig = figgyPudding({
   access: {},
   algorithms: { default: ['sha512'] },
-  dryRun: 'dry-run',
-  'dry-run': {},
-  force: {},
   npmVersion: {},
   tag: { default: 'latest' },
   Promise: { default: () => Promise }
