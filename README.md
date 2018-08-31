@@ -69,6 +69,10 @@ end up with `dist.integrity = 'sha512-deadbeefbadc0ffee'`. Any algorithm
 supported by your current node version is allowed -- npm clients that do not
 support those algorithms will simply ignore the unsupported hashes.
 
+If `opts.access` is passed in, it must be one of `public` or `restricted`.
+Unscoped packages cannot be `restricted`, and the registry may agree or disagree
+with whether you're allowed to publish a restricted package.
+
 ##### Example
 
 ```javascript
