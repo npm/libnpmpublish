@@ -69,8 +69,8 @@ test('basic publish', t => {
 
     return publish(manifest, tarData, OPTS.concat({
       token: 'deadbeef'
-    })).then(() => {
-      t.ok(true, 'publish succeeded')
+    })).then(ret => {
+      t.ok(ret, 'publish succeeded')
     })
   })
 })

@@ -32,8 +32,8 @@ test('basic test', t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(200, doc)
   srv.delete(`/foo/-rev/${REV}`).reply(201)
-  return unpub('foo', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
+  return unpub('foo', OPTS).then(ret => {
+    t.ok(ret, 'foo was unpublished')
   })
 })
 

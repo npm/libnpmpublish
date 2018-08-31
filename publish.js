@@ -14,7 +14,7 @@ const validate = require('aproba')
 
 const PublishConfig = figgyPudding({
   access: {},
-  integrityHashes: { default: ['sha512'] },
+  algorithms: { default: ['sha512'] },
   dryRun: 'dry-run',
   'dry-run': {},
   force: {},
@@ -35,6 +35,8 @@ function publish (manifest, tarball, opts) {
       ), { code: 'EPRIVATE' })
     }
     const spec = npa.resolve(manifest.name, manifest.version)
+    // NOTE: spec is used to pick the appropriate registry/auth combo.
+    opts = opts.concat({ spec })
     const reg = npmFetch.pickRegistry(spec, opts)
     const auth = npmAuth(reg, opts)
     const pubManifest = patchedManifest(spec, auth, manifest, opts)
@@ -52,9 +54,10 @@ function publish (manifest, tarball, opts) {
       const metadata = buildMetadata(
         spec, auth, reg, pubManifest, tardata, opts
       )
-      return npmFetch.json(spec.escapedName, opts.concat({
+      return npmFetch(spec.escapedName, opts.concat({
         method: 'PUT',
-        body: metadata
+        body: metadata,
+        ignoreBody: true
       })).catch(err => {
         if (err.code !== 'E409') { throw err }
         return npmFetch.json(spec.escapedName, opts.concat({
@@ -62,14 +65,15 @@ function publish (manifest, tarball, opts) {
         })).then(
           current => patchMetadata(current, metadata, opts)
         ).then(newMetadata => {
-          return npmFetch.json(spec.escapedName, opts.concat({
+          return npmFetch(spec.escapedName, opts.concat({
             method: 'PUT',
-            body: newMetadata
+            body: newMetadata,
+            ignoreBody: true
           }))
         })
       })
     })
-  })
+  }).then(() => true)
 }
 
 function patchedManifest (spec, auth, base, opts) {
@@ -128,7 +132,7 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
   const tbName = manifest.name + '-' + manifest.version + '.tgz'
   const tbURI = manifest.name + '/-/' + tbName
   const integrity = ssri.fromData(tardata, {
-    algorithms: [...new Set(['sha1'].concat(opts.integrityHashes))]
+    algorithms: [...new Set(['sha1'].concat(opts.algorithms))]
   })
 
   manifest._id = manifest.name + '@' + manifest.version
