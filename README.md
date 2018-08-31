@@ -59,12 +59,19 @@ pack. You can then `fs.createReadStream('my-proj-1.0.0.tgz')` and pass that to
 client, and so should generally be compatible with any registry the npm CLI has
 been able to publish to in the past.
 
+If `opts.npmVersion` is passed in, it will be used as the `_npmVersion` field in
+the outgoing packument. It's recommended you add your own user agent string in
+there!
+
 ##### Example
 
 ```javascript
 const pkg = require('./dist/package.json')
 const tarball = fs.createReadStream('./dist/pkg-1.0.1.tgz')
-await libpub.publish(pkg, tarball, { token: 'my-auth-token-here' })
+await libpub.publish(pkg, tarball, {
+  npmVersion: 'my-pub-script@1.0.2',
+  token: 'my-auth-token-here'
+})
 // Package has been published to the npm registry.
 ```
 
