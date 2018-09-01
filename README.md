@@ -14,7 +14,7 @@ const search = require('libnpmpublish')
 
 ## Install
 
-`$ npm install libnpmsearch`
+`$ npm install libnpmpublish`
 
 ## Table of Contents
 
