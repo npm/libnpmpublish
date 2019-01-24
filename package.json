@@ -40,7 +40,7 @@
     "lodash.clonedeep": "^4.5.0",
     "normalize-package-data": "^2.4.0",
     "npm-package-arg": "^6.1.0",
-    "npm-registry-fetch": "^3.8.0",
+    "npm-registry-fetch": "^3.9.0",
     "semver": "^5.5.1",
     "ssri": "^6.0.1"
   }
