@@ -22,7 +22,7 @@
     "nock": "^9.6.1",
     "standard": "*",
     "standard-version": "*",
-    "tap": "*",
+    "tap": "^14.6.4",
     "tar-stream": "^1.6.1",
     "weallbehave": "*",
     "weallcontribute": "*"
