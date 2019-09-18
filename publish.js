@@ -122,7 +122,7 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
     manifest.maintainers = JSON.parse(JSON.stringify(root.maintainers))
   }
 
-  root.versions[ manifest.version ] = manifest
+  root.versions[manifest.version] = manifest
   const tag = manifest.tag || opts.tag
   root['dist-tags'][tag] = manifest.version
 
@@ -135,17 +135,17 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
   manifest._id = manifest.name + '@' + manifest.version
   manifest.dist = manifest.dist || {}
   // Don't bother having sha1 in the actual integrity field
-  manifest.dist.integrity = integrity['sha512'][0].toString()
+  manifest.dist.integrity = integrity.sha512[0].toString()
   // Legacy shasum support
-  manifest.dist.shasum = integrity['sha1'][0].hexDigest()
+  manifest.dist.shasum = integrity.sha1[0].hexDigest()
   manifest.dist.tarball = url.resolve(registry, tbURI)
     .replace(/^https:\/\//, 'http://')
 
   root._attachments = {}
-  root._attachments[ tbName ] = {
-    'content_type': 'application/octet-stream',
-    'data': tardata.toString('base64'),
-    'length': tardata.length
+  root._attachments[tbName] = {
+    content_type: 'application/octet-stream',
+    data: tardata.toString('base64'),
+    length: tardata.length
   }
 
   return root

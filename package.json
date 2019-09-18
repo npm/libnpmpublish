@@ -20,9 +20,9 @@
   "devDependencies": {
     "bluebird": "^3.5.1",
     "nock": "^9.6.1",
-    "standard": "*",
-    "standard-version": "*",
-    "tap": "*",
+    "standard": "^12.0.1",
+    "standard-version": "^7.0.0",
+    "tap": "^12.7.0",
     "tar-stream": "^1.6.1",
     "weallbehave": "*",
     "weallcontribute": "*"

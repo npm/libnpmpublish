@@ -47,13 +47,13 @@ test('basic publish', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -106,13 +106,13 @@ test('scoped publish', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/@zkat/libnpmpublish/-/@zkat/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/@zkat/libnpmpublish/-/@zkat/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         '@zkat/libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -176,13 +176,13 @@ test('retry after a conflict', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.1.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.1.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.1.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -207,13 +207,13 @@ test('retry after a conflict', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -292,13 +292,13 @@ test('retry after a conflict -- no versions on remote', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -369,13 +369,13 @@ test('version conflict', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -445,13 +445,13 @@ test('publish with basic auth', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -506,13 +506,13 @@ test('publish base64 string', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -566,13 +566,13 @@ test('publish tar stream', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -651,13 +651,13 @@ test('publish includes access', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -764,13 +764,13 @@ test('other error code', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -827,13 +827,13 @@ test('publish includes access', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -889,7 +889,7 @@ test('publishConfig on manifest', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           },
           publishConfig: {
             registry: REG
@@ -898,7 +898,7 @@ test('publishConfig on manifest', t => {
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -958,13 +958,13 @@ test('publish with encoded _auth', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
@@ -1017,13 +1017,13 @@ test('publish with 302 redirect', t => {
           dist: {
             shasum,
             integrity: integrity.toString(),
-            tarball: `http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz`
+            tarball: 'http://mock.reg/libnpmpublish/-/libnpmpublish-1.0.0.tgz'
           }
         }
       },
       _attachments: {
         'libnpmpublish-1.0.0.tgz': {
-          'content_type': 'application/octet-stream',
+          content_type: 'application/octet-stream',
           data: tarData.toString('base64'),
           length: tarData.length
         }
