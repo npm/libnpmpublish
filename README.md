@@ -1,9 +1,24 @@
-# libnpmpublish [![npm version](https://img.shields.io/npm/v/libnpmpublish.svg)](https://npm.im/libnpmpublish) [![license](https://img.shields.io/npm/l/libnpmpublish.svg)](https://npm.im/libnpmpublish) [![Travis](https://img.shields.io/travis/npm/libnpmpublish.svg)](https://travis-ci.org/npm/libnpmpublish) [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/zkat/libnpmpublish?svg=true)](https://ci.appveyor.com/project/zkat/libnpmpublish) [![Coverage Status](https://coveralls.io/repos/github/npm/libnpmpublish/badge.svg?branch=latest)](https://coveralls.io/github/npm/libnpmpublish?branch=latest)
+# libnpmpublish
+
+[![npm version](https://img.shields.io/npm/v/libnpmpublish.svg)](https://npm.im/libnpmpublish)
+[![license](https://img.shields.io/npm/l/libnpmpublish.svg)](https://npm.im/libnpmpublish)
+[![Travis](https://img.shields.io/travis/npm/libnpmpublish.svg)](https://travis-ci.org/npm/libnpmpublish)
+[![Coverage Status](https://coveralls.io/repos/github/npm/libnpmpublish/badge.svg?branch=latest)](https://coveralls.io/github/npm/libnpmpublish?branch=latest)
 
 [`libnpmpublish`](https://github.com/npm/libnpmpublish) is a Node.js library for
 programmatically publishing and unpublishing npm packages. It does not take care
 of packing tarballs from source code, but once you have a tarball, it can take
 care of putting it up on a nice registry for you.
+
+## Table of Contents
+
+* [Example](#example)
+* [Install](#install)
+* [Contributing](#contributing)
+* [API](#api)
+  * [publish/unpublish opts](#opts)
+  * [`publish()`](#publish)
+  * [`unpublish()`](#unpublish)
 
 ## Example
 
@@ -16,14 +31,22 @@ const { publish, unpublish } = require('libnpmpublish')
 
 `$ npm install libnpmpublish`
 
-## Table of Contents
+### Contributing
 
-* [Example](#example)
-* [Install](#install)
-* [API](#api)
-  * [publish/unpublish opts](#opts)
-  * [`publish()`](#publish)
-  * [`unpublish()`](#unpublish)
+The npm team enthusiastically welcomes contributions and project participation!
+There's a bunch of things you can do if you want to contribute! The
+[Contributor Guide](https://github.com/npm/cli/blob/latest/CONTRIBUTING.md)
+outlines the process for community interaction and contribution. Please don't
+hesitate to jump in if you'd like to, or even ask us questions if something
+isn't clear.
+
+All participants and maintainers in this project are expected to follow the
+[npm Code of Conduct](https://www.npmjs.com/policies/conduct), and just
+generally be excellent to each other.
+
+Please refer to the [Changelog](CHANGELOG.md) for project history details, too.
+
+Happy hacking!
 
 ### API
 
