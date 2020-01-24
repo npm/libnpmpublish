@@ -20,6 +20,7 @@ function unpublish (spec, opts) {
     opts = opts.concat({ spec })
     const pkgUri = spec.escapedName
     return npmFetch.json(pkgUri, opts.concat({
+      'prefer-online': true,
       query: { write: true }
     })).then(pkg => {
       if (!spec.rawSpec || spec.rawSpec === '*') {
@@ -66,6 +67,7 @@ function unpublish (spec, opts) {
           })).then(() => {
             // Remove the tarball itself
             return npmFetch.json(pkgUri, opts.concat({
+              'prefer-online': true,
               query: { write: true }
             })).then(({ _rev, _id }) => {
               const tarballUrl = url.parse(dist.tarball).pathname.substr(1)
