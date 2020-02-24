@@ -61,7 +61,6 @@ for options that can be passed in.
 A couple of options of note for those in a hurry:
 
 * `opts.token` - can be passed in and will be used as the authentication token for the registry. For other ways to pass in auth details, see the n-r-f docs.
-* `opts.Promise` - If you pass this in, the Promises returned by `libnpmpublish` commands will use this Promise class instead. For example: `{Promise: require('bluebird')}`
 
 #### <a name="publish"></a> `> libpub.publish(pkgJson, tarData, [opts]) -> Promise`
 
