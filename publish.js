@@ -1,7 +1,6 @@
 'use strict'
 
 const cloneDeep = require('lodash.clonedeep')
-const figgyPudding = require('figgy-pudding')
 const { fixer } = require('normalize-package-data')
 const getStream = require('get-stream')
 const npa = require('npm-package-arg')
@@ -12,18 +11,9 @@ const ssri = require('ssri')
 const url = require('url')
 const validate = require('aproba')
 
-const PublishConfig = figgyPudding({
-  access: {},
-  algorithms: { default: ['sha512'] },
-  npmVersion: {},
-  tag: { default: 'latest' },
-  Promise: { default: () => Promise }
-})
-
 module.exports = publish
 function publish (manifest, tarball, opts) {
-  opts = PublishConfig(opts)
-  return new opts.Promise(resolve => resolve()).then(() => {
+  return Promise.resolve().then(() => {
     validate('OSO|OOO', [manifest, tarball, opts])
     if (manifest.private) {
       throw Object.assign(new Error(
@@ -33,7 +23,14 @@ function publish (manifest, tarball, opts) {
     }
     const spec = npa.resolve(manifest.name, manifest.version)
     // NOTE: spec is used to pick the appropriate registry/auth combo.
-    opts = opts.concat(manifest.publishConfig, { spec })
+    opts = {
+      algorithms: ['sha512'],
+      tag: 'latest',
+      ...opts,
+      ...manifest.publishConfig,
+      spec
+    }
+
     const reg = npmFetch.pickRegistry(spec, opts)
     const auth = npmAuth(reg, opts)
     const pubManifest = patchedManifest(spec, auth, manifest, opts)
@@ -51,22 +48,26 @@ function publish (manifest, tarball, opts) {
       const metadata = buildMetadata(
         spec, auth, reg, pubManifest, tardata, opts
       )
-      return npmFetch(spec.escapedName, opts.concat({
+
+      return npmFetch(spec.escapedName, {
+        ...opts,
         method: 'PUT',
         body: metadata,
         ignoreBody: true
-      })).catch(err => {
+      }).catch(err => {
         if (err.code !== 'E409') { throw err }
-        return npmFetch.json(spec.escapedName, opts.concat({
+        return npmFetch.json(spec.escapedName, {
+          ...opts,
           query: { write: true }
-        })).then(
+        }).then(
           current => patchMetadata(current, metadata, opts)
         ).then(newMetadata => {
-          return npmFetch(spec.escapedName, opts.concat({
+          return npmFetch(spec.escapedName, {
+            ...opts,
             method: 'PUT',
             body: newMetadata,
             ignoreBody: true
-          }))
+          })
         })
       })
     })
@@ -74,10 +75,11 @@ function publish (manifest, tarball, opts) {
 }
 
 function patchedManifest (spec, auth, base, opts) {
+  const { npmVersion } = opts
   const manifest = cloneDeep(base)
   manifest._nodeVersion = process.versions.node
-  if (opts.npmVersion) {
-    manifest._npmVersion = opts.npmVersion
+  if (npmVersion) {
+    manifest._npmVersion = npmVersion
   }
   if (auth.username || auth.email) {
     // NOTE: This is basically pointless, but reproduced because it's what
@@ -106,6 +108,7 @@ function patchedManifest (spec, auth, base, opts) {
 }
 
 function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
+  const { access, tag: _tag, algorithms } = opts
   const root = {
     _id: manifest.name,
     name: manifest.name,
@@ -115,7 +118,7 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
     readme: manifest.readme || ''
   }
 
-  if (opts.access) root.access = opts.access
+  if (access) root.access = access
 
   if (!auth.token) {
     root.maintainers = [{ name: auth.username, email: auth.email }]
@@ -123,13 +126,13 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
   }
 
   root.versions[manifest.version] = manifest
-  const tag = manifest.tag || opts.tag
+  const tag = manifest.tag || _tag
   root['dist-tags'][tag] = manifest.version
 
   const tbName = manifest.name + '-' + manifest.version + '.tgz'
   const tbURI = manifest.name + '/-/' + tbName
   const integrity = ssri.fromData(tardata, {
-    algorithms: [...new Set(['sha1'].concat(opts.algorithms))]
+    algorithms: [...new Set(['sha1'].concat(algorithms))]
   })
 
   manifest._id = manifest.name + '@' + manifest.version
@@ -151,7 +154,7 @@ function buildMetadata (spec, auth, registry, manifest, tardata, opts) {
   return root
 }
 
-function patchMetadata (current, newData, opts) {
+function patchMetadata (current, newData) {
   const curVers = Object.keys(current.versions || {}).map(v => {
     return semver.clean(v, true)
   }).concat(Object.keys(current.time || {}).map(v => {
@@ -192,15 +195,15 @@ function patchMetadata (current, newData, opts) {
   return current
 }
 
-function slurpTarball (tarSrc, opts) {
+function slurpTarball (tarSrc) {
   if (Buffer.isBuffer(tarSrc)) {
-    return opts.Promise.resolve(tarSrc)
+    return Promise.resolve(tarSrc)
   } else if (typeof tarSrc === 'string') {
-    return opts.Promise.resolve(Buffer.from(tarSrc, 'base64'))
+    return Promise.resolve(Buffer.from(tarSrc, 'base64'))
   } else if (typeof tarSrc.pipe === 'function') {
     return getStream.buffer(tarSrc)
   } else {
-    return opts.Promise.reject(Object.assign(
+    return Promise.reject(Object.assign(
       new Error('invalid tarball argument. Must be a Buffer, a base64 string, or a binary stream'), {
         code: 'EBADTAR'
       }))

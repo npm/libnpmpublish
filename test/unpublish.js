@@ -1,12 +1,11 @@
 'use strict'
 
-const figgyPudding = require('figgy-pudding')
 const test = require('tap').test
 const tnock = require('./util/tnock.js')
 
-const OPTS = figgyPudding({ registry: {} })({
+const OPTS = {
   registry: 'https://mock.reg/'
-})
+}
 
 const REG = OPTS.registry
 const REV = '72-47f2986bfd8e8b55068b204588bbf484'

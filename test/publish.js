@@ -2,7 +2,6 @@
 
 const crypto = require('crypto')
 const cloneDeep = require('lodash.clonedeep')
-const figgyPudding = require('figgy-pudding')
 const mockTar = require('./util/mock-tarball.js')
 const { PassThrough } = require('stream')
 const ssri = require('ssri')
@@ -11,9 +10,9 @@ const tnock = require('./util/tnock.js')
 
 const publish = require('../publish.js')
 
-const OPTS = figgyPudding({ registry: {} })({
+const OPTS = {
   registry: 'https://mock.reg/'
-})
+}
 
 const REG = OPTS.registry
 
@@ -67,9 +66,10 @@ test('basic publish', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       token: 'deadbeef'
-    })).then(ret => {
+    }).then(ret => {
       t.ok(ret, 'publish succeeded')
     })
   })
@@ -126,10 +126,11 @@ test('scoped publish', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -241,11 +242,12 @@ test('retry after a conflict', t => {
       }, mergedPackument), 'posted packument includes _rev and a merged version')
       return true
     }).reply(201, {})
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       username: 'other',
       email: 'other@idk.tech'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -325,11 +327,12 @@ test('retry after a conflict -- no versions on remote', t => {
       }, mergedPackument), 'posted packument includes _rev and a merged version')
       return true
     }).reply(201, {})
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       username: 'other',
       email: 'other@idk.tech'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -390,10 +393,11 @@ test('version conflict', t => {
     srv.get('/libnpmpublish?write=true').reply(200, Object.assign({
       _rev: REV
     }, newPackument))
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(
+    }).then(
       () => { throw new Error('should not succeed') },
       err => {
         t.equal(err.code, 'EPUBLISHCONFLICT', 'got publish conflict code')
@@ -465,11 +469,12 @@ test('publish with basic auth', t => {
       authorization: /^Basic /
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       username: 'zkat',
       email: 'kat@example.tech'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -526,10 +531,11 @@ test('publish base64 string', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData.toString('base64'), OPTS.concat({
+    return publish(manifest, tarData.toString('base64'), {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -588,10 +594,11 @@ test('publish tar stream', t => {
 
     const stream = new PassThrough()
     setTimeout(() => stream.end(tarData), 0)
-    return publish(manifest, stream, OPTS.concat({
+    return publish(manifest, stream, {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -608,10 +615,11 @@ test('refuse if package marked private', t => {
     'package.json': JSON.stringify(manifest),
     'index.js': 'console.log("hello world")'
   }).then(tarData => {
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(
+    }).then(
       () => { throw new Error('should not have succeeded') },
       err => {
         t.equal(err.code, 'EPRIVATE', 'got correct error code')
@@ -671,10 +679,11 @@ test('publish includes access', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       token: 'deadbeef',
       access: 'public'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -690,10 +699,11 @@ test('refuse if package is unscoped plus `restricted` access', t => {
     'package.json': JSON.stringify(manifest),
     'index.js': 'console.log("hello world")'
   }).then(tarData => {
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       access: 'restricted'
-    })).then(
+    }).then(
       () => { throw new Error('should not have succeeded') },
       err => {
         t.equal(err.code, 'EUNSCOPED', 'got correct error code')
@@ -708,10 +718,11 @@ test('refuse if tarball is wrong type', t => {
     version: '1.0.0',
     description: 'some stuff'
   }
-  return publish(manifest, { data: 42 }, OPTS.concat({
+  return publish(manifest, { data: 42 }, {
+    ...OPTS,
     npmVersion: '6.9.0',
     token: 'deadbeef'
-  })).then(
+  }).then(
     () => { throw new Error('should not have succeeded') },
     err => {
       t.equal(err.code, 'EBADTAR', 'got correct error code')
@@ -784,10 +795,11 @@ test('other error code', t => {
       authorization: 'Bearer deadbeef'
     }).reply(500, { error: 'go away' })
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
-    })).then(
+    }).then(
       () => { throw new Error('should not succeed') },
       err => {
         t.match(err.message, /go away/, 'no retry on non-409')
@@ -847,10 +859,11 @@ test('publish includes access', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       token: 'deadbeef',
       access: 'public'
-    })).then(() => {
+    }).then(() => {
       t.ok(true, 'publish succeeded')
     })
   })
@@ -978,10 +991,11 @@ test('publish with encoded _auth', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       _auth: Buffer.from('myuser:mypassword', 'utf8').toString('base64'),
       email: 'my@ema.il'
-    })).then(ret => {
+    }).then(ret => {
       t.ok(ret, 'publish succeeded using _auth')
     })
   })
@@ -1039,9 +1053,10 @@ test('publish with 302 redirect', t => {
       authorization: 'Bearer deadbeef'
     }).reply(201, {})
 
-    return publish(manifest, tarData, OPTS.concat({
+    return publish(manifest, tarData, {
+      ...OPTS,
       token: 'deadbeef'
-    })).then(ret => {
+    }).then(ret => {
       t.ok(ret, 'publish succeeded')
     })
   })
