@@ -2,19 +2,17 @@
 
 [![npm version](https://img.shields.io/npm/v/libnpmpublish.svg)](https://npm.im/libnpmpublish)
 [![license](https://img.shields.io/npm/l/libnpmpublish.svg)](https://npm.im/libnpmpublish)
-[![Travis](https://img.shields.io/travis/npm/libnpmpublish.svg)](https://travis-ci.org/npm/libnpmpublish)
+[![GitHub Actions](https://github.com/npm/libnpmpublish/workflows/Node%20CI/badge.svg)](https://github.com/npm/libnpmpublish/actions?query=workflow%3A%22Node+CI%22)
 [![Coverage Status](https://coveralls.io/repos/github/npm/libnpmpublish/badge.svg?branch=latest)](https://coveralls.io/github/npm/libnpmpublish?branch=latest)
 
 [`libnpmpublish`](https://github.com/npm/libnpmpublish) is a Node.js library for
-programmatically publishing and unpublishing npm packages. It does not take care
-of packing tarballs from source code, but once you have a tarball, it can take
-care of putting it up on a nice registry for you.
+programmatically publishing and unpublishing npm packages. It takes care
+of packing tarballs from source code and putting it up on a nice registry for you.
 
 ## Table of Contents
 
 * [Example](#example)
 * [Install](#install)
-* [Contributing](#contributing)
 * [API](#api)
   * [publish/unpublish opts](#opts)
   * [`publish()`](#publish)
@@ -31,23 +29,6 @@ const { publish, unpublish } = require('libnpmpublish')
 
 `$ npm install libnpmpublish`
 
-### Contributing
-
-The npm team enthusiastically welcomes contributions and project participation!
-There's a bunch of things you can do if you want to contribute! The
-[Contributor Guide](https://github.com/npm/cli/blob/latest/CONTRIBUTING.md)
-outlines the process for community interaction and contribution. Please don't
-hesitate to jump in if you'd like to, or even ask us questions if something
-isn't clear.
-
-All participants and maintainers in this project are expected to follow the
-[npm Code of Conduct](https://www.npmjs.com/policies/conduct), and just
-generally be excellent to each other.
-
-Please refer to the [Changelog](CHANGELOG.md) for project history details, too.
-
-Happy hacking!
-
 ### API
 
 #### <a name="opts"></a> `opts` for `libnpmpublish` commands
@@ -59,27 +40,16 @@ documentation](https://www.npmjs.com/package/npm-registry-fetch#fetch-options)
 for options that can be passed in.
 
 A couple of options of note for those in a hurry:
+* `opts.defaultTag` - registers the published package with the given tag, defaults to `latest`.
+
+* `opts.access` - tells the registry whether this package should be published as public or restricted. Only applies to scoped packages, which default to restricted.
 
 * `opts.token` - can be passed in and will be used as the authentication token for the registry. For other ways to pass in auth details, see the n-r-f docs.
 
-#### <a name="publish"></a> `> libpub.publish(pkgJson, tarData, [opts]) -> Promise`
+#### <a name="publish"></a> `> libpub.publish(path, pkgJson, [opts]) -> Promise`
 
-Publishes `tarData` to the appropriate configured registry. `pkgJson` should be
+Packs a tarball located in `path` and publishes to the appropriate configured registry. `pkgJson` should be
 the parsed `package.json` for the package that is being published.
-
-`tarData` can be a Buffer, a base64-encoded string, or a binary stream of data.
-Note that publishing itself can't be streamed, so the entire stream will be
-consumed into RAM before publishing (and are thus limited in how big they can
-be).
-
-Since `libnpmpublish` does not generate tarballs itself, one way to build your
-own tarball for publishing is to do `npm pack` in the directory you wish to
-pack. You can then `fs.createReadStream('my-proj-1.0.0.tgz')` and pass that to
-`libnpmpublish`, along with `require('./package.json')`.
-
-`publish()` does its best to emulate legacy publish logic in the standard npm
-client, and so should generally be compatible with any registry the npm CLI has
-been able to publish to in the past.
 
 If `opts.npmVersion` is passed in, it will be used as the `_npmVersion` field in
 the outgoing packument. It's recommended you add your own user agent string in
@@ -91,19 +61,14 @@ end up with `dist.integrity = 'sha512-deadbeefbadc0ffee'`. Any algorithm
 supported by your current node version is allowed -- npm clients that do not
 support those algorithms will simply ignore the unsupported hashes.
 
-If `opts.access` is passed in, it must be one of `public` or `restricted`.
-Unscoped packages cannot be `restricted`, and the registry may agree or disagree
-with whether you're allowed to publish a restricted package.
-
 ##### Example
 
 ```javascript
-const pkg = require('./dist/package.json')
-const tarball = fs.createReadStream('./dist/pkg-1.0.1.tgz')
-await libpub.publish(pkg, tarball, {
+const path = '/a/path/to/your/source/code'
+await libpub.publish(path, {
   npmVersion: 'my-pub-script@1.0.2',
   token: 'my-auth-token-here'
-})
+}, opts)
 // Package has been published to the npm registry.
 ```
 
