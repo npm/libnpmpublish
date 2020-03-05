@@ -1,6 +1,6 @@
 'use strict'
 
-const test = require('tap').test
+const t = require('tap')
 const tnock = require('./fixtures/tnock.js')
 
 const OPTS = {
@@ -11,7 +11,7 @@ const REG = OPTS.registry
 const REV = '72-47f2986bfd8e8b55068b204588bbf484'
 const unpub = require('../unpublish.js')
 
-test('basic test', t => {
+t.test('basic test', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -31,12 +31,11 @@ test('basic test', t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(200, doc)
   srv.delete(`/foo/-rev/${REV}`).reply(201)
-  return unpub('foo', OPTS).then(ret => {
-    t.ok(ret, 'foo was unpublished')
-  })
+  const ret = await unpub('foo', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('scoped basic test', t => {
+t.test('scoped basic test', async t => {
   const doc = {
     _id: '@foo/bar',
     _rev: REV,
@@ -56,12 +55,11 @@ test('scoped basic test', t => {
   const srv = tnock(t, REG)
   srv.get('/@foo%2fbar?write=true').reply(200, doc)
   srv.delete(`/@foo%2fbar/-rev/${REV}`).reply(201)
-  return unpub('@foo/bar', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('@foo/bar', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('unpublish specific, last version', t => {
+t.test('unpublish specific, last version', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -81,12 +79,11 @@ test('unpublish specific, last version', t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(200, doc)
   srv.delete(`/foo/-rev/${REV}`).reply(201)
-  return unpub('foo@1.0.0', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo@1.0.0', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('unpublish specific version', t => {
+t.test('unpublish specific version', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -133,29 +130,29 @@ test('unpublish specific version', t => {
   srv.put(`/foo/-rev/${REV}`, postEdit).reply(200)
   srv.get('/foo?write=true').reply(200, postEdit)
   srv.delete(`/foo/-/foo-1.0.1.tgz/-rev/${REV}`).reply(200)
-  return unpub('foo@1.0.1', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo@1.0.1', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('404 considered a success', t => {
+t.test('404 considered a success', async t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(404)
-  return unpub('foo', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('non-404 errors', t => {
+t.test('non-404 errors', async t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(500)
-  return unpub('foo', OPTS).then(
-    () => { throw new Error('should not have succeeded') },
-    err => { t.equal(err.code, 'E500', 'got right error from server') }
-  )
+
+  try {
+    await unpub('foo', OPTS)
+  } catch (err) {
+    t.equal(err.code, 'E500', 'got right error from server')
+  }
 })
 
-test('packument with missing versions unpublishes whole thing', t => {
+t.test('packument with missing versions unpublishes whole thing', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -167,12 +164,11 @@ test('packument with missing versions unpublishes whole thing', t => {
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(200, doc)
   srv.delete(`/foo/-rev/${REV}`).reply(201)
-  return unpub('foo@1.0.0', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo@1.0.0', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('packument with missing specific version assumed unpublished', t => {
+t.test('packument with missing specific version assumed unpublished', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -191,12 +187,11 @@ test('packument with missing specific version assumed unpublished', t => {
   }
   const srv = tnock(t, REG)
   srv.get('/foo?write=true').reply(200, doc)
-  return unpub('foo@1.0.1', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo@1.0.1', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
 
-test('unpublish specific version without dist-tag update', t => {
+t.test('unpublish specific version without dist-tag update', async t => {
   const doc = {
     _id: 'foo',
     _rev: REV,
@@ -242,7 +237,6 @@ test('unpublish specific version without dist-tag update', t => {
   srv.put(`/foo/-rev/${REV}`, postEdit).reply(200)
   srv.get('/foo?write=true').reply(200, postEdit)
   srv.delete(`/foo/-/foo-1.0.1.tgz/-rev/${REV}`).reply(200)
-  return unpub('foo@1.0.1', OPTS).then(() => {
-    t.ok(true, 'foo was unpublished')
-  })
+  const ret = await unpub('foo@1.0.1', OPTS)
+  t.ok(ret, 'foo was unpublished')
 })
