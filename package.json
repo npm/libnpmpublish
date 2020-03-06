@@ -27,7 +27,6 @@
   "bugs": "https://github.com/npm/libnpmpublish/issues",
   "homepage": "https://npmjs.com/package/libnpmpublish",
   "dependencies": {
-    "graceful-fs": "^4.2.3",
     "lodash.clonedeep": "^4.5.0",
     "normalize-package-data": "^2.5.0",
     "npm-package-arg": "^8.0.0",

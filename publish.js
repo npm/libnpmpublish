@@ -10,7 +10,7 @@ const semver = require('semver')
 const ssri = require('ssri')
 const { URL } = require('url')
 
-const statAsync = util.promisify(require('graceful-fs').stat)
+const statAsync = util.promisify(require('fs').stat)
 
 module.exports = publish
 async function publish (folder, manifest, opts) {
