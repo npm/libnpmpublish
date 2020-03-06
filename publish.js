@@ -8,7 +8,7 @@ const util = require('util')
 const pacote = require('pacote')
 const semver = require('semver')
 const ssri = require('ssri')
-const url = require('url')
+const { URL } = require('url')
 
 const statAsync = util.promisify(require('graceful-fs').stat)
 
@@ -135,7 +135,11 @@ function buildMetadata (registry, manifest, tarballData, opts) {
   manifest.dist.integrity = integrity.sha512[0].toString()
   // Legacy shasum support
   manifest.dist.shasum = integrity.sha1[0].hexDigest()
-  manifest.dist.tarball = url.resolve(registry, tarballURI)
+
+  // NB: the CLI always fetches via HTTPS if the registry is HTTPS,
+  // regardless of what's here.  This makes it so that installing
+  // from an HTTP-only mirror doesn't cause problems, though.
+  manifest.dist.tarball = new URL(tarballURI, registry).href
     .replace(/^https:\/\//, 'http://')
 
   root._attachments = {}
