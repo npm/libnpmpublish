@@ -580,7 +580,7 @@ t.test('other error code', async t => {
 
 t.test('error if not a directory', async t => {
   const folder = t.testdir({
-    'dummy': ''
+    dummy: ''
   })
 
   const manifest = {

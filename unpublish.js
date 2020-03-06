@@ -3,7 +3,7 @@
 const npa = require('npm-package-arg')
 const npmFetch = require('npm-registry-fetch')
 const semver = require('semver')
-const url = require('url')
+const { URL } = require('url')
 
 module.exports = unpublish
 async function unpublish (spec, opts) {
@@ -83,7 +83,7 @@ async function unpublish (spec, opts) {
         ...opts,
         query: { write: true }
       })
-      const tarballUrl = url.parse(dist.tarball).pathname.substr(1)
+      const tarballUrl = new URL(dist.tarball).pathname.substr(1)
       await npmFetch(`${tarballUrl}/-rev/${_rev}`, {
         ...opts,
         method: 'DELETE',
