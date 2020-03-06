@@ -76,7 +76,7 @@ async function publish (folder, manifest, opts) {
       ...opts,
       query: { write: true }
     })
-    const newMetadata = await patchMetadata(current, metadata, opts)
+    const newMetadata = patchMetadata(current, metadata, opts)
     return npmFetch(spec.escapedName, {
       ...opts,
       method: 'PUT',
