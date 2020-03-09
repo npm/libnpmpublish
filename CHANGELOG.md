@@ -1,4 +1,20 @@
-# Changelog
+# Change Log
+
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/npm/libnpmpublish/compare/v2.0.0...v3.0.0) (2020-03-09)
+
+### Breaking Changes
+
+* [`ecaeb0b`](https://github.com/npm/libnpmpublish/commit/ecaeb0b) feat: pack tarballs from source code using pacote v10 ([@claudiahdz](https://github.com/claudiahdz))
+
+* [`f6bf2b8`](https://github.com/npm/libnpmpublish/commit/f6bf2b8) feat: unpublish code refactor ([@claudiahdz](https://github.com/claudiahdz))
+
+### Miscellaneuous
+
+* [`5cea10f`](https://github.com/npm/libnpmpublish/commit/5cea10f) chore: basic project updates ([@claudiahdz](https://github.com/claudiahdz))
+* [`3010b93`](https://github.com/npm/libnpmpublish/commit/3010b93) chore: cleanup badges + contributing ([@ruyadorno](https://github.com/ruyadorno))
+
+---
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
