@@ -1,5 +1,12 @@
 # Change Log
 
+<a name="3.0.1"></a>
+# [3.0.1](https://github.com/npm/libnpmpublish/compare/v3.0.0...v3.0.1) (2020-03-27)
+
+### Features
+
+* [`3e02307`](https://github.com/npm/libnpmpublish/commit/3e02307) chore: pack tarballs using libnpmpack ([@claudiahdz](https://github.com/claudiahdz))
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/npm/libnpmpublish/compare/v2.0.0...v3.0.0) (2020-03-09)
 
