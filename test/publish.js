@@ -2,11 +2,12 @@
 
 const t = require('tap')
 const ssri = require('ssri')
-const pacote = require('pacote')
 const crypto = require('crypto')
-const tnock = require('./fixtures/tnock.js')
-const publish = require('../publish.js')
+const pack = require('libnpmpack')
 const cloneDeep = require('lodash.clonedeep')
+
+const publish = require('../publish.js')
+const tnock = require('./fixtures/tnock.js')
 
 const testDir = t.testdir({
   'package.json': JSON.stringify({
@@ -29,7 +30,7 @@ t.test('basic publish', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
   const packument = {
@@ -86,7 +87,7 @@ t.test('scoped publish', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
   const packument = {
@@ -146,7 +147,7 @@ t.test('retry after a conflict', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
 
@@ -262,7 +263,7 @@ t.test('retry after a conflict -- no versions on remote', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
 
@@ -344,7 +345,7 @@ t.test('version conflict', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
   const basePackument = {
@@ -432,7 +433,7 @@ t.test('publish includes access', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
   const packument = {
@@ -523,7 +524,7 @@ t.test('other error code', async t => {
     description: 'some stuff'
   }
 
-  const tarData = await pacote.tarball(`file:${testDir}`)
+  const tarData = await pack(`file:${testDir}`, { ...OPTS })
   const shasum = crypto.createHash('sha1').update(tarData).digest('hex')
   const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] })
   const packument = {

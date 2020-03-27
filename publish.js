@@ -4,11 +4,11 @@ const { fixer } = require('normalize-package-data')
 const npmFetch = require('npm-registry-fetch')
 const cloneDeep = require('lodash.clonedeep')
 const npa = require('npm-package-arg')
-const util = require('util')
-const pacote = require('pacote')
+const pack = require('libnpmpack')
 const semver = require('semver')
-const ssri = require('ssri')
 const { URL } = require('url')
+const util = require('util')
+const ssri = require('ssri')
 
 const statAsync = util.promisify(require('fs').stat)
 
@@ -56,7 +56,7 @@ async function publish (folder, manifest, opts) {
     )
   }
 
-  const tarballData = await pacote.tarball(`file:${folder}`)
+  const tarballData = await pack(`file:${folder}`, { ...opts })
   const metadata = buildMetadata(reg, pubManifest, tarballData, opts)
 
   try {
