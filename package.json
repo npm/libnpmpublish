@@ -1,6 +1,6 @@
 {
   "name": "libnpmpublish",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Programmatic API for the bits behind npm publish and unpublish",
   "author": "npm Inc. <support@npmjs.com>",
   "contributors": [
