@@ -13,10 +13,12 @@
   ],
   "license": "ISC",
   "scripts": {
+    "eslint": "eslint",
+    "lint": "npm run eslint -- \"*.js\"",
+    "lintfix": "npm run lint -- --fix",
     "preversion": "npm test",
     "postversion": "npm publish",
     "prepublishOnly": "git push origin --follow-tags",
-    "lint": "standard",
     "test": "tap",
     "posttest": "npm run lint"
   },
@@ -24,6 +26,11 @@
     "check-coverage": true
   },
   "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.2",
     "nock": "^12.0.2",
     "standard": "^14.3.1",
     "tap": "^14.10.6"

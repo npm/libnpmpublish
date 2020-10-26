@@ -1,5 +1,3 @@
-'use strict'
-
 const { fixer } = require('normalize-package-data')
 const npmFetch = require('npm-registry-fetch')
 const cloneDeep = require('lodash.clonedeep')
@@ -12,8 +10,7 @@ const ssri = require('ssri')
 
 const statAsync = util.promisify(require('fs').stat)
 
-module.exports = publish
-async function publish (folder, manifest, opts) {
+const publish = async (folder, manifest, opts) => {
   if (manifest.private) {
     throw Object.assign(
       new Error(
@@ -32,7 +29,7 @@ async function publish (folder, manifest, opts) {
     access: spec.scope ? 'restricted' : 'public',
     algorithms: ['sha512'],
     ...opts,
-    spec
+    spec,
   }
 
   const stat = await statAsync(folder)
@@ -64,36 +61,36 @@ async function publish (folder, manifest, opts) {
       ...opts,
       method: 'PUT',
       body: metadata,
-      ignoreBody: true
+      ignoreBody: true,
     })
   } catch (err) {
-    if (err.code !== 'E409') { throw err }
+    if (err.code !== 'E409')
+      throw err
     // if E409, we attempt exactly ONE retry, to protect us
     // against malicious activity like trying to publish
     // a bunch of new versions of a package at the same time
     // and/or spamming the registry
     const current = await npmFetch.json(spec.escapedName, {
       ...opts,
-      query: { write: true }
+      query: { write: true },
     })
     const newMetadata = patchMetadata(current, metadata, opts)
     return npmFetch(spec.escapedName, {
       ...opts,
       method: 'PUT',
       body: newMetadata,
-      ignoreBody: true
+      ignoreBody: true,
     })
   }
 }
 
-function patchManifest (_manifest, opts) {
+const patchManifest = (_manifest, opts) => {
   const { npmVersion } = opts
   const manifest = cloneDeep(_manifest)
 
   manifest._nodeVersion = process.versions.node
-  if (npmVersion) {
+  if (npmVersion)
     manifest._npmVersion = npmVersion
-  }
 
   fixer.fixNameField(manifest, { strict: true, allowLegacyCase: true })
   const version = semver.clean(manifest.version)
@@ -107,7 +104,7 @@ function patchManifest (_manifest, opts) {
   return manifest
 }
 
-function buildMetadata (registry, manifest, tarballData, opts) {
+const buildMetadata = (registry, manifest, tarballData, opts) => {
   const { access, defaultTag, algorithms } = opts
   const root = {
     _id: manifest.name,
@@ -116,7 +113,7 @@ function buildMetadata (registry, manifest, tarballData, opts) {
     'dist-tags': {},
     versions: {},
     access,
-    readme: manifest.readme || ''
+    readme: manifest.readme || '',
   }
 
   root.versions[manifest.version] = manifest
@@ -126,7 +123,7 @@ function buildMetadata (registry, manifest, tarballData, opts) {
   const tarballName = `${manifest.name}-${manifest.version}.tgz`
   const tarballURI = `${manifest.name}/-/${tarballName}`
   const integrity = ssri.fromData(tarballData, {
-    algorithms: [...new Set(['sha1'].concat(algorithms))]
+    algorithms: [...new Set(['sha1'].concat(algorithms))],
   })
 
   manifest._id = `${manifest.name}@${manifest.version}`
@@ -146,17 +143,18 @@ function buildMetadata (registry, manifest, tarballData, opts) {
   root._attachments[tarballName] = {
     content_type: 'application/octet-stream',
     data: tarballData.toString('base64'),
-    length: tarballData.length
+    length: tarballData.length,
   }
 
   return root
 }
 
-function patchMetadata (current, newData) {
+const patchMetadata = (current, newData) => {
   const curVers = Object.keys(current.versions || {}).map(v => {
     return semver.clean(v, true)
   }).concat(Object.keys(current.time || {}).map(v => {
-    if (semver.valid(v, true)) { return semver.clean(v, true) }
+    if (semver.valid(v, true))
+      return semver.clean(v, true)
   })).filter(v => v)
 
   const newVersion = Object.keys(newData.versions)[0]
@@ -169,19 +167,19 @@ function patchMetadata (current, newData) {
       ), {
         code: 'EPUBLISHCONFLICT',
         pkgid,
-        version
+        version,
       })
   }
 
   current.versions = current.versions || {}
   current.versions[newVersion] = newData.versions[newVersion]
-  for (var i in newData) {
+  for (const i in newData) {
     switch (i) {
       // objects that copy over the new stuffs
       case 'dist-tags':
       case 'versions':
       case '_attachments':
-        for (var j in newData[i]) {
+        for (const j in newData[i]) {
           current[i] = current[i] || {}
           current[i][j] = newData[i][j]
         }
@@ -190,8 +188,11 @@ function patchMetadata (current, newData) {
       // copy
       default:
         current[i] = newData[i]
+        break
     }
   }
 
   return current
 }
+
+module.exports = publish
