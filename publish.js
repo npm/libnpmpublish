@@ -1,22 +1,15 @@
 const { fixer } = require('normalize-package-data')
 const npmFetch = require('npm-registry-fetch')
-const cloneDeep = require('lodash.clonedeep')
 const npa = require('npm-package-arg')
-const pack = require('libnpmpack')
 const semver = require('semver')
 const { URL } = require('url')
-const util = require('util')
 const ssri = require('ssri')
 
-const statAsync = util.promisify(require('fs').stat)
-
-const publish = async (folder, manifest, opts) => {
+const publish = async (manifest, tarballData, opts) => {
   if (manifest.private) {
     throw Object.assign(
-      new Error(
-        `This package has been marked as private\n
-         Remove the 'private' field from the package.json to publish it.`
-      ),
+      new Error(`This package has been marked as private
+Remove the 'private' field from the package.json to publish it.`),
       { code: 'EPRIVATE' }
     )
   }
@@ -32,15 +25,6 @@ const publish = async (folder, manifest, opts) => {
     spec,
   }
 
-  const stat = await statAsync(folder)
-  // checks if it's a dir
-  if (!stat.isDirectory()) {
-    throw Object.assign(
-      new Error('not a directory'),
-      { code: 'ENOTDIR' }
-    )
-  }
-
   const reg = npmFetch.pickRegistry(spec, opts)
   const pubManifest = patchManifest(manifest, opts)
 
@@ -53,7 +37,6 @@ const publish = async (folder, manifest, opts) => {
     )
   }
 
-  const tarballData = await pack(`file:${folder}`, { ...opts })
   const metadata = buildMetadata(reg, pubManifest, tarballData, opts)
 
   try {
@@ -86,7 +69,8 @@ const publish = async (folder, manifest, opts) => {
 
 const patchManifest = (_manifest, opts) => {
   const { npmVersion } = opts
-  const manifest = cloneDeep(_manifest)
+  // we only update top-level fields, so a shallow clone is fine
+  const manifest = { ..._manifest }
 
   manifest._nodeVersion = process.versions.node
   if (npmVersion)
@@ -113,7 +97,6 @@ const buildMetadata = (registry, manifest, tarballData, opts) => {
     'dist-tags': {},
     versions: {},
     access,
-    readme: manifest.readme || '',
   }
 
   root.versions[manifest.version] = manifest
@@ -150,12 +133,11 @@ const buildMetadata = (registry, manifest, tarballData, opts) => {
 }
 
 const patchMetadata = (current, newData) => {
-  const curVers = Object.keys(current.versions || {}).map(v => {
-    return semver.clean(v, true)
-  }).concat(Object.keys(current.time || {}).map(v => {
-    if (semver.valid(v, true))
-      return semver.clean(v, true)
-  })).filter(v => v)
+  const curVers = Object.keys(current.versions || {})
+    .map(v => semver.clean(v, true))
+    .concat(Object.keys(current.time || {})
+      .map(v => semver.valid(v, true) && semver.clean(v, true))
+      .filter(v => v))
 
   const newVersion = Object.keys(newData.versions)[0]
 
