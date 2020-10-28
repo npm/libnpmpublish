@@ -31,6 +31,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.2",
+    "libnpmpack": "^2.0.0",
+    "lodash.clonedeep": "^4.5.0",
     "nock": "^12.0.2",
     "standard": "^14.3.1",
     "tap": "^14.10.6"
@@ -42,8 +44,6 @@
   "bugs": "https://github.com/npm/libnpmpublish/issues",
   "homepage": "https://npmjs.com/package/libnpmpublish",
   "dependencies": {
-    "libnpmpack": "^2.0.0",
-    "lodash.clonedeep": "^4.5.0",
     "normalize-package-data": "^3.0.0",
     "npm-package-arg": "^8.1.0",
     "npm-registry-fetch": "^8.1.5",

@@ -54,7 +54,6 @@ t.test('basic publish', async t => {
         }
       }
     },
-    readme: '',
     access: 'public',
     _attachments: {
       'libnpmpublish-1.0.0.tgz': {
@@ -73,7 +72,7 @@ t.test('basic publish', async t => {
     authorization: 'Bearer deadbeef'
   }).reply(201, {})
 
-  const ret = await publish(testDir, manifest, {
+  const ret = await publish(manifest, tarData, {
     ...OPTS,
     token: 'deadbeef'
   })
@@ -112,7 +111,6 @@ t.test('scoped publish', async t => {
         }
       }
     },
-    readme: '',
     access: 'restricted',
     _attachments: {
       '@claudiahdz/libnpmpublish-1.0.0.tgz': {
@@ -131,7 +129,7 @@ t.test('scoped publish', async t => {
     authorization: 'Bearer deadbeef'
   }).reply(201, {})
 
-  const ret = await publish(testDir, manifest, {
+  const ret = await publish(manifest, tarData, {
     ...OPTS,
     npmVersion: '6.13.7',
     token: 'deadbeef'
@@ -154,7 +152,6 @@ t.test('retry after a conflict', async t => {
   const basePackument = {
     name: 'libnpmpublish',
     description: 'some stuff',
-    readme: '',
     access: 'public',
     _id: 'libnpmpublish',
     'dist-tags': {},
@@ -246,7 +243,7 @@ t.test('retry after a conflict', async t => {
     return true
   }).reply(201, {})
 
-  const ret = await publish(testDir, manifest, {
+  const ret = await publish(manifest, tarData, {
     ...OPTS,
     token: 'deadbeef',
     npmVersion: '6.13.7'
@@ -271,7 +268,6 @@ t.test('retry after a conflict -- no versions on remote', async t => {
     name: 'libnpmpublish',
     description: 'some stuff',
     access: 'public',
-    readme: '',
     _id: 'libnpmpublish'
   }
   const currentPackument = { ...basePackument }
@@ -328,7 +324,7 @@ t.test('retry after a conflict -- no versions on remote', async t => {
     return true
   }).reply(201, {})
 
-  const ret = await publish(testDir, manifest, {
+  const ret = await publish(manifest, tarData, {
     ...OPTS,
     npmVersion: '6.13.7',
     token: 'deadbeef'
@@ -351,7 +347,6 @@ t.test('version conflict', async t => {
   const basePackument = {
     name: 'libnpmpublish',
     description: 'some stuff',
-    readme: '',
     access: 'public',
     _id: 'libnpmpublish',
     'dist-tags': {},
@@ -397,7 +392,7 @@ t.test('version conflict', async t => {
   })
 
   try {
-    await publish(testDir, manifest, {
+    await publish(manifest, tarData, {
       ...OPTS,
       npmVersion: '6.13.7',
       token: 'deadbeef'
@@ -416,7 +411,7 @@ t.test('refuse if package marked private', async t => {
   }
 
   try {
-    await publish(testDir, manifest, {
+    await publish(manifest, Buffer.from(''), {
       ...OPTS,
       npmVersion: '6.9.0',
       token: 'deadbeef'
@@ -439,7 +434,6 @@ t.test('publish includes access', async t => {
   const packument = {
     name: 'libnpmpublish',
     description: 'some stuff',
-    readme: '',
     access: 'public',
     _id: 'libnpmpublish',
     'dist-tags': {
@@ -476,7 +470,7 @@ t.test('publish includes access', async t => {
     authorization: 'Bearer deadbeef'
   }).reply(201, {})
 
-  const ret = await publish(testDir, manifest, {
+  const ret = await publish(manifest, tarData, {
     ...OPTS,
     token: 'deadbeef',
     access: 'public'
@@ -493,7 +487,7 @@ t.test('refuse if package is unscoped plus `restricted` access', async t => {
   }
 
   try {
-    await publish(testDir, manifest, {
+    await publish(manifest, Buffer.from(''), {
       ...OPTS,
       npmVersion: '6.13.7',
       access: 'restricted'
@@ -511,7 +505,7 @@ t.test('refuse if bad semver on manifest', async t => {
   }
 
   try {
-    await publish(testDir, manifest, OPTS)
+    await publish(manifest, Buffer.from(''), OPTS)
   } catch (err) {
     t.equal(err.code, 'EBADSEMVER', 'got correct error code')
   }
@@ -530,7 +524,6 @@ t.test('other error code', async t => {
   const packument = {
     name: 'libnpmpublish',
     description: 'some stuff',
-    readme: '',
     access: 'public',
     _id: 'libnpmpublish',
     'dist-tags': {
@@ -569,30 +562,12 @@ t.test('other error code', async t => {
   }).reply(500, { error: 'go away' })
 
   try {
-    await publish(testDir, manifest, {
+    await publish(manifest, tarData, {
       ...OPTS,
       npmVersion: '6.13.7',
       token: 'deadbeef'
     })
   } catch (err) {
     t.match(err.message, /go away/, 'no retry on non-409')
-  }
-})
-
-t.test('error if not a directory', async t => {
-  const folder = t.testdir({
-    dummy: ''
-  })
-
-  const manifest = {
-    name: 'libnpmpublish',
-    version: '1.0.0',
-    description: 'some stuff'
-  }
-
-  try {
-    await publish(`${folder}/dummy`, manifest, OPTS)
-  } catch (err) {
-    t.equal(err.code, 'ENOTDIR', 'not a directory')
   }
 })
