@@ -23,7 +23,7 @@ t.test('basic test', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       }
     }
@@ -47,7 +47,7 @@ t.test('scoped basic test', async t => {
       '1.0.0': {
         name: '@foo/bar',
         dist: {
-          tarball: `${REG}/@foo/bar/-/foo-1.0.0.tgz`
+          tarball: `${REG}@foo/bar/-/foo-1.0.0.tgz`
         }
       }
     }
@@ -71,7 +71,7 @@ t.test('unpublish specific, last version', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       }
     }
@@ -97,13 +97,13 @@ t.test('unpublish specific version', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       },
       '1.0.1': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.1.tgz`
+          tarball: `${REG}foo/-/foo-1.0.1.tgz`
         }
       }
     }
@@ -119,7 +119,7 @@ t.test('unpublish specific version', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       }
     }
@@ -180,7 +180,7 @@ t.test('packument with missing specific version assumed unpublished', async t =>
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       }
     }
@@ -205,13 +205,13 @@ t.test('unpublish specific version without dist-tag update', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       },
       '1.0.1': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.1.tgz`
+          tarball: `${REG}foo/-/foo-1.0.1.tgz`
         }
       }
     }
@@ -227,7 +227,7 @@ t.test('unpublish specific version without dist-tag update', async t => {
       '1.0.0': {
         name: 'foo',
         dist: {
-          tarball: `${REG}/foo/-/foo-1.0.0.tgz`
+          tarball: `${REG}foo/-/foo-1.0.0.tgz`
         }
       }
     }
